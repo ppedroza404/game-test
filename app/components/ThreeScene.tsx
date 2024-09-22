@@ -6,6 +6,8 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";  
 import Stats from "three/examples/jsm/libs/stats.module.js";
 import GUI from "lil-gui";
+import { World } from "@/src/World.class";
+
 
 const ThreeScene = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -32,7 +34,13 @@ const ThreeScene = () => {
         );        
         const controls = new OrbitControls(camera, renderer.domElement);
         
+        // addmind terrain
+        const world = new World(10, 10);
+        scene.add(world);
+
+
         const sun = new THREE.DirectionalLight();
+        sun.intensity = 3;  
         sun.position.set(1, 2, 3);
         scene.add(sun);
 
@@ -42,14 +50,12 @@ const ThreeScene = () => {
 
         renderer.setSize(window.innerWidth, window.innerHeight);
         containerRef.current?.appendChild(renderer.domElement);
-        camera.position.z = 5;
+
+        camera.position.set(10,2,10);
+        
+
         controls.update();
 
-
-        const geometry = new THREE.BoxGeometry();
-        const material = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
-        const cube = new THREE.Mesh(geometry, material);
-        scene.add(cube);
 
         // Render the scene and camera
         renderer.render(scene, camera);
@@ -69,9 +75,18 @@ const ThreeScene = () => {
 
 
         // Add Gui controls
-        const folder = gui.addFolder('Cube');
-        folder.add(cube.position, 'x', -10, 10).name('Position X');
-        folder.addColor(cube.material, 'color').name('Color');
+        const worldFolder = gui.addFolder('Terrain');
+        worldFolder.add(world,'width' , 1 , 20, 1).name('Width');
+        worldFolder.add(world,'height', 1 , 20 , 1).name('Height');        
+        worldFolder.add(world,'treeCount', 1, 100, 1).name('Tree Count');
+        worldFolder.add(world,'rockCount', 1, 100, 1).name('Rock Count');
+        worldFolder.add(world,'busheCount', 1, 100, 1).name('Bush Count');
+        worldFolder.add(world,'generate').name('Generate');
+        worldFolder.onChange(() => {
+          world.createTerrain();
+        })
+
+
 
         // Add this function inside the useEffect hook
         const renderScene = () => {
