@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-export class World extends THREE.Mesh {
+export class World extends THREE.Group {
   private objectMap: Map<any, any> = new Map();
   width: number;
   height: number;
@@ -96,7 +96,7 @@ export class World extends THREE.Mesh {
         this.remove(this.terrain);
       }
 
-    const terrainMaterial = new THREE.MeshBasicMaterial({ color: 0x50a000, wireframe: false }); 
+    const terrainMaterial = new THREE.MeshBasicMaterial({ color: 0xffff, wireframe: false }); 
     const terrainGeometry = new THREE.PlaneGeometry(
       this.width,
       this.height,
